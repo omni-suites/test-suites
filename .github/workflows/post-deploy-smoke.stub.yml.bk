@@ -1,0 +1,52 @@
+# Stub: call this from app deploy workflows after staging rollout
+# (repository_dispatch / workflow_call) to run @smoke.
+name: Post-deploy smoke (stub)
+
+on:
+  workflow_call:
+    inputs:
+      test_env:
+        description: Target environment
+        type: string
+        default: staging
+  workflow_dispatch:
+    inputs:
+      test_env:
+        description: Target environment
+        type: choice
+        default: staging
+        options:
+          - staging
+          - local
+
+jobs:
+  smoke:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run @smoke
+        env:
+          TEST_ENV: ${{ inputs.test_env }}
+          CI: true
+        run: npx playwright test --grep @smoke
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-smoke
+          path: playwright-report/
+          retention-days: 7
