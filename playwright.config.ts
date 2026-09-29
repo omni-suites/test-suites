@@ -1,18 +1,18 @@
 import path from 'path';
 import dotenv from 'dotenv';
 import { defineConfig, devices } from '@playwright/test';
-import { getUrls } from './config/environments';
+import { getUrls } from './src/config/environments';
 
 // Load test-suites/.env into process.env (gitignored)
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
- * Central E2E config — tests live under services/ (domain folders + tags).
+ * Central E2E config — tests live under src/services/ (domain folders + tags).
  * Suites: --grep @smoke | @sanity | @regression
  * Layer:  --grep @ui | @api
  */
 export default defineConfig({
-  testDir: './services',
+  testDir: './src/services',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -32,6 +32,5 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    // API-only runs still need a project; chromium is fine (request fixture).
   ],
 });

@@ -7,10 +7,12 @@ Organize by **service/domain**. Classify runs with **tags** — not smoke/sanity
 ## Layout
 
 ```text
-services/<domain>/*.spec.ts
-shared/{api,fixtures,helpers}
-config/{environments,targets}.ts
-reporters/                      # optional Squash sync (stub)
+playwright.config.ts
+src/
+  services/<domain>/*.spec.ts
+  shared/{api,fixtures,helpers}
+  config/{environments,targets}.ts
+  reporters/                 # optional Squash sync (stub)
 .github/workflows/
 ```
 
