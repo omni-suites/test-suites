@@ -12,8 +12,11 @@ src/
   services/<domain>/*.spec.ts
   shared/{api,fixtures,helpers}
   config/{environments,reportportal}.ts
-  reporters/                 # optional Squash sync (stub)
+  reporters/                    # optional Squash sync (stub)
 .github/workflows/
+  e2e.yml
+  nightly-regression.yml
+  post-deploy-smoke.yml
 ```
 
 | Tags (suite) | Tags (layer) | Squash |
@@ -24,13 +27,14 @@ src/
 
 ```bash
 npm ci
-npx playwright install
+npx playwright install chromium
 cp .env.sample .env
+# fill required URLs + ReportPortal key in .env
 ```
 
-`.env` is loaded automatically by `playwright.config.ts` (dotenv).
+`.env` is loaded by `playwright.config.ts` (dotenv). Missing `FRONTEND_URL` / `ORDER_URL` / `INVENTORY_URL` / `NOTIFICATION_URL` fails fast.
 
-## Run
+## Run locally
 
 ```bash
 npm test
@@ -38,18 +42,36 @@ npm run test:smoke
 npm run test:api
 npm run test:ui
 npm run test:regression
+npm run report          # local Playwright HTML report
 ```
-
-Set required URLs in `.env` (`FRONTEND_URL`, `ORDER_URL`, `INVENTORY_URL`, `NOTIFICATION_URL`). See `.env.sample`. Missing vars fail fast at startup.
 
 ## ReportPortal
 
-Set in `.env` (never commit the API key):
+Reporting is on when `RP_API_KEY` is set (`RP_ENABLED=false` to skip).
 
-- `RP_ENDPOINT` — e.g. `https://report-portal.test-suites-poc.work.gd/api/v2`
-- `RP_PROJECT` — e.g. `omni-suites`
-- `RP_API_KEY` — from ReportPortal → Profile → API keys
-- `RP_LAUNCH` / `RP_DESCRIPTION` — optional
-- `RP_ENABLED=false` — disable reporting without removing the key
+| Variable | Purpose |
+|----------|---------|
+| `RP_ENDPOINT` | e.g. `https://report-portal.test-suites-poc.work.gd/api/v2` |
+| `RP_PROJECT` | e.g. `omni-suites` |
+| `RP_API_KEY` | Profile → API keys (never commit) |
+| `RP_LAUNCH` | Launch name (optional locally) |
+| `RP_DESCRIPTION` | Launch description (optional) |
 
-After a run, open ReportPortal → project **omni-suites** → Launches.
+After a run: ReportPortal → **omni-suites** → Launches. Local HTML report stays separate (`npm run report`).
+
+## CI
+
+| Workflow | Trigger | Suite |
+|----------|---------|--------|
+| `e2e.yml` | `workflow_dispatch` | chosen tag (`smoke` / `api` / … / `all`) |
+| `nightly-regression.yml` | schedule + manual | `@regression` |
+| `post-deploy-smoke.yml` | `workflow_call` / manual | `@smoke` |
+
+Configure GitHub **Environment `staging`** (or repo vars/secrets):
+
+| Type | Names |
+|------|--------|
+| vars | `FRONTEND_URL`, `ORDER_URL`, `INVENTORY_URL`, `NOTIFICATION_URL`, `RP_ENDPOINT`, `RP_PROJECT` |
+| secret | `RP_API_KEY` |
+
+CI sets `RP_LAUNCH` / `RP_DESCRIPTION` per run (suite + `run_id` / commit). Playwright HTML is also uploaded as a workflow artifact.

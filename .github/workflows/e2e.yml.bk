@@ -1,4 +1,11 @@
-# On-demand E2E — pick suite via inputs (tags)
+# INACTIVE until renamed to e2e.yml (review before push)
+# On-demand E2E — suite via tags; reports to ReportPortal when RP_API_KEY is set
+#
+# GitHub → Settings → Environments → staging (or repo vars/secrets):
+#   vars:   FRONTEND_URL, ORDER_URL, INVENTORY_URL, NOTIFICATION_URL
+#   vars:   RP_ENDPOINT, RP_PROJECT
+#   secret: RP_API_KEY
+
 name: E2E
 
 on:
@@ -17,7 +24,7 @@ on:
           - api
           - all
       test_env:
-        description: 'Target environment'
+        description: 'Label for TEST_ENV / RP attributes (URLs still from vars)'
         required: true
         default: 'staging'
         type: choice
@@ -46,13 +53,18 @@ jobs:
 
       - name: Run suite
         env:
-          TEST_ENV: ${{ inputs.test_env }}
           CI: true
-          # Optional URL overrides via repo/env secrets later:
-          # FRONTEND_URL: ${{ vars.FRONTEND_URL }}
-          # ORDER_URL: ${{ vars.ORDER_URL }}
-          # INVENTORY_URL: ${{ vars.INVENTORY_URL }}
-          # NOTIFICATION_URL: ${{ vars.NOTIFICATION_URL }}
+          TEST_ENV: ${{ inputs.test_env }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          ORDER_URL: ${{ vars.ORDER_URL }}
+          INVENTORY_URL: ${{ vars.INVENTORY_URL }}
+          NOTIFICATION_URL: ${{ vars.NOTIFICATION_URL }}
+          RP_ENABLED: 'true'
+          RP_ENDPOINT: ${{ vars.RP_ENDPOINT }}
+          RP_PROJECT: ${{ vars.RP_PROJECT }}
+          RP_API_KEY: ${{ secrets.RP_API_KEY }}
+          RP_LAUNCH: e2e-${{ inputs.suite }}-${{ github.run_id }}
+          RP_DESCRIPTION: '${{ github.workflow }} · ${{ inputs.suite }} · ${{ github.ref_name }} · ${{ github.sha }}'
         run: |
           if [ "${{ inputs.suite }}" = "all" ]; then
             npx playwright test

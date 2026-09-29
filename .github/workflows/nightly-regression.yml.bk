@@ -1,4 +1,8 @@
-# Nightly regression against staging
+# INACTIVE until renamed to nightly-regression.yml (review before push)
+# Nightly @regression against staging + ReportPortal
+#
+# Requires same staging vars/secrets as e2e.yml.bk
+
 name: Nightly Regression
 
 on:
@@ -27,8 +31,18 @@ jobs:
 
       - name: Run @regression
         env:
-          TEST_ENV: staging
           CI: true
+          TEST_ENV: staging
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          ORDER_URL: ${{ vars.ORDER_URL }}
+          INVENTORY_URL: ${{ vars.INVENTORY_URL }}
+          NOTIFICATION_URL: ${{ vars.NOTIFICATION_URL }}
+          RP_ENABLED: 'true'
+          RP_ENDPOINT: ${{ vars.RP_ENDPOINT }}
+          RP_PROJECT: ${{ vars.RP_PROJECT }}
+          RP_API_KEY: ${{ secrets.RP_API_KEY }}
+          RP_LAUNCH: nightly-regression-${{ github.run_id }}
+          RP_DESCRIPTION: '${{ github.workflow }} · ${{ github.ref_name }} · ${{ github.sha }}'
         run: npx playwright test --grep @regression
 
       - uses: actions/upload-artifact@v4

@@ -1,18 +1,26 @@
-# Stub: call this from app deploy workflows after staging rollout
-# (repository_dispatch / workflow_call) to run @smoke.
+# INACTIVE until renamed to post-deploy-smoke.yml (review before push)
+# Callable after app deploy (workflow_call) or manual — runs @smoke + ReportPortal
+#
+# Requires same staging vars/secrets as e2e.yml.bk
+
 name: Post-deploy smoke (stub)
 
 on:
   workflow_call:
     inputs:
       test_env:
-        description: Target environment
+        description: Target environment label
         type: string
         default: staging
+      trigger_service:
+        description: Which app service triggered this (optional attribute)
+        type: string
+        required: false
+        default: ''
   workflow_dispatch:
     inputs:
       test_env:
-        description: Target environment
+        description: Target environment label
         type: choice
         default: staging
         options:
@@ -40,8 +48,18 @@ jobs:
 
       - name: Run @smoke
         env:
-          TEST_ENV: ${{ inputs.test_env }}
           CI: true
+          TEST_ENV: ${{ inputs.test_env }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          ORDER_URL: ${{ vars.ORDER_URL }}
+          INVENTORY_URL: ${{ vars.INVENTORY_URL }}
+          NOTIFICATION_URL: ${{ vars.NOTIFICATION_URL }}
+          RP_ENABLED: 'true'
+          RP_ENDPOINT: ${{ vars.RP_ENDPOINT }}
+          RP_PROJECT: ${{ vars.RP_PROJECT }}
+          RP_API_KEY: ${{ secrets.RP_API_KEY }}
+          RP_LAUNCH: post-deploy-smoke-${{ github.run_id }}
+          RP_DESCRIPTION: '${{ github.workflow }} · ${{ inputs.test_env }} · ${{ inputs.trigger_service }} · ${{ github.sha }}'
         run: npx playwright test --grep @smoke
 
       - uses: actions/upload-artifact@v4
