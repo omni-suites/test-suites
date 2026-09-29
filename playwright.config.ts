@@ -23,12 +23,13 @@ if (isReportPortalEnabled()) {
 }
 
 /**
- * Central E2E config — tests live under src/services/ (domain folders + tags).
+ * Specs: tests/<domain>/*.spec.ts
+ * Support: src/{config,services,helpers,fixtures,reporters}
  * Suites: --grep @smoke | @sanity | @regression
  * Layer:  --grep @ui | @api
  */
 export default defineConfig({
-  testDir: './src/services',
+  testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

@@ -1,6 +1,6 @@
-import { test, expect } from '../../shared/fixtures';
-import { createOrder, listOrders } from '../../shared/api/orders';
-import { attachRpMeta } from '../../shared/helpers/rp';
+import { test, expect } from '@fixtures';
+import { createOrder, listOrders } from '@services/order/api';
+import { attachRpMeta } from '@helpers/rp';
 
 test.describe('order-service API', () => {
   test('Create order via Order API @smoke @regression @api [TC-103]', async ({

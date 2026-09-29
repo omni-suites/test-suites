@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
-import { getUrls } from '../../config/environments';
-import { rpInfo } from './rp';
+import { getUrls } from '@config/environments';
+import { rpInfo } from '@helpers/rp';
 
 /** Open omni-client home and wait for the inventory section. */
 export async function openOmniClient(page: Page) {

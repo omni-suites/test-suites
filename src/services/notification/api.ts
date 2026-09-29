@@ -1,6 +1,6 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
-import { getUrls } from '../../config/environments';
-import { rpInfo } from '../helpers/rp';
+import { getUrls } from '@config/environments';
+import { rpInfo } from '@helpers/rp';
 
 export async function listNotifications(request: APIRequestContext) {
   return test.step('GET /notifications', async () => {
@@ -19,9 +19,7 @@ export async function sendNotification(
   return test.step(`POST /notifications (${body.channel ?? 'default'})`, async () => {
     const url = `${getUrls().notification}/notifications`;
     const res = await request.post(url, { data: body });
-    rpInfo(
-      `POST ${url} recipient=${body.recipient} → ${res.status()}`,
-    );
+    rpInfo(`POST ${url} recipient=${body.recipient} → ${res.status()}`);
     return res;
   });
 }

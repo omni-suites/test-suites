@@ -1,6 +1,6 @@
-import { test, expect } from '../../shared/fixtures';
-import { deductStock, listInventory } from '../../shared/api/inventory';
-import { attachRpMeta } from '../../shared/helpers/rp';
+import { test, expect } from '@fixtures';
+import { deductStock, listInventory } from '@services/inventory/api';
+import { attachRpMeta } from '@helpers/rp';
 
 test.describe('inventory-service API', () => {
   test('List inventory @smoke @api [TC-104a]', async ({ request }) => {

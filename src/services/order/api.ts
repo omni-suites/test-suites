@@ -1,6 +1,6 @@
 import { APIRequestContext, expect, test } from '@playwright/test';
-import { getUrls } from '../../config/environments';
-import { rpInfo } from '../helpers/rp';
+import { getUrls } from '@config/environments';
+import { rpInfo } from '@helpers/rp';
 
 export async function listOrders(request: APIRequestContext) {
   return test.step('GET /orders', async () => {

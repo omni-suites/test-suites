@@ -1,8 +1,8 @@
-import { test, expect } from '../../shared/fixtures';
-import { createOrder } from '../../shared/api/orders';
-import { listInventory } from '../../shared/api/inventory';
-import { listNotifications } from '../../shared/api/notifications';
-import { attachRpMeta } from '../../shared/helpers/rp';
+import { test, expect } from '@fixtures';
+import { createOrder } from '@services/order/api';
+import { listInventory } from '@services/inventory/api';
+import { listNotifications } from '@services/notification/api';
+import { attachRpMeta } from '@helpers/rp';
 
 /**
  * Full API chain: order → inventory deduct (inside order) → notification.

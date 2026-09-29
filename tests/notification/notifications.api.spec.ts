@@ -1,9 +1,9 @@
-import { test, expect } from '../../shared/fixtures';
+import { test, expect } from '@fixtures';
 import {
   listNotifications,
   sendNotification,
-} from '../../shared/api/notifications';
-import { attachRpMeta } from '../../shared/helpers/rp';
+} from '@services/notification/api';
+import { attachRpMeta } from '@helpers/rp';
 
 test.describe('notification-service API', () => {
   test('Send / list notifications via API @smoke @regression @api [TC-105]', async ({

@@ -1,6 +1,6 @@
-import { test, expect } from '../../shared/fixtures';
-import { openOmniClient } from '../../shared/helpers/ui';
-import { attachRpMeta } from '../../shared/helpers/rp';
+import { test, expect } from '@fixtures';
+import { openOmniClient } from '@helpers/ui';
+import { attachRpMeta } from '@helpers/rp';
 
 test.describe('omni-client — place order', () => {
   test('Place valid order end-to-end @smoke @regression @ui [TC-101]', async ({

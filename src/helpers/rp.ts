@@ -1,5 +1,5 @@
 import { ReportingApi } from '@reportportal/agent-js-playwright';
-import { isReportPortalEnabled } from '../../config/reportportal';
+import { isReportPortalEnabled } from '@config/reportportal';
 
 export type RpMeta = {
   /** Squash / RP test case id, e.g. TC-103 */

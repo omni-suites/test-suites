@@ -2,26 +2,30 @@
 
 Central Playwright **UI + API** automation for the omni-suites PoC.
 
-Organize by **service/domain**. Classify runs with **tags** — not smoke/sanity/regression folders.
+Organize by **service/domain** under `tests/`. Classify runs with **tags** — not smoke/sanity/regression folders.
 
 ## Layout
 
 ```text
 playwright.config.ts
+tests/<domain>/*.spec.ts          # specs only
 src/
-  services/<domain>/*.spec.ts
-  shared/{api,fixtures,helpers}
-  config/{environments,reportportal}.ts
-  reporters/                    # optional Squash sync (stub)
+  config/                         # environments, reportportal
+  services/<name>/api.ts          # HTTP clients per backend
+  helpers/                        # ui, rp meta
+  fixtures/                       # Playwright test.extend
+  reporters/                      # optional Squash sync (stub)
 .github/workflows/
   e2e.yml
   nightly-regression.yml
   post-deploy-smoke.yml
 ```
 
+Path aliases (see `tsconfig.json`): `@fixtures`, `@helpers/*`, `@services/*`, `@config/*`.
+
 | Tags (suite) | Tags (layer) | Squash |
 |--------------|--------------|--------|
-| `@smoke` `@sanity` `@regression` | `@ui` `@api` | `[TC-101]` in test titles |
+| `@smoke` `@sanity` `@regression` | `@ui` `@api` | `[TC-xxx]` in titles + `attachRpMeta` |
 
 ## Setup
 
@@ -59,7 +63,7 @@ Reporting is on when `RP_API_KEY` is set (`RP_ENABLED=false` to skip).
 
 After a run: ReportPortal → **omni-suites** → Launches. Local HTML report stays separate (`npm run report`).
 
-Each test calls `attachRpMeta()` (`src/shared/helpers/rp.ts`) so Item Details get **Test case id**, **Description**, and attributes (`suite` / `layer` / `service` / `squash`). API helpers use `test.step` + `rpInfo` for richer ALL LOGS.
+Each test calls `attachRpMeta()` (`@helpers/rp`) so Item Details get **Test case id**, **Description**, and attributes. Service API clients use `test.step` + `rpInfo` for richer ALL LOGS.
 
 ## CI
 

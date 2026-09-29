@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { getUrls, type EnvironmentUrls } from '../../config/environments';
+import { getUrls, type EnvironmentUrls } from '@config/environments';
 
 type Fixtures = {
   urls: EnvironmentUrls;
