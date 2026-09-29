@@ -1,5 +1,5 @@
 import { test, expect } from '@fixtures';
-import { openOmniClient } from '@helpers/ui';
+import { openOmniClient } from '@services/omni-client/ui';
 import { attachRpMeta } from '@helpers/rp';
 
 test.describe('omni-client — place order', () => {

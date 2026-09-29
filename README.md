@@ -11,8 +11,9 @@ playwright.config.ts
 tests/<domain>/*.spec.ts          # specs only
 src/
   config/                         # environments, reportportal
-  services/<name>/api.ts          # HTTP clients per backend
-  helpers/                        # ui, rp meta
+  services/<name>/api.ts          # HTTP clients (order, inventory, notification)
+  services/omni-client/ui.ts      # browser UI helpers for frontend
+  helpers/                        # cross-cutting (e.g. rp meta)
   fixtures/                       # Playwright test.extend
   reporters/                      # optional Squash sync (stub)
 .github/workflows/
