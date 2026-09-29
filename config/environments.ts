@@ -1,8 +1,7 @@
 /**
- * Environment URLs for Playwright runs.
- * Prefer process.env (CI / .env); fall back to local defaults.
+ * Target URLs for Playwright runs — required from env (.env / CI).
+ * No hardcoded host fallbacks.
  */
-export type AppEnvironment = 'local' | 'staging';
 
 export interface EnvironmentUrls {
   frontend: string;
@@ -11,33 +10,27 @@ export interface EnvironmentUrls {
   notification: string;
 }
 
-const defaults: Record<AppEnvironment, EnvironmentUrls> = {
-  local: {
-    frontend: 'http://localhost:5173',
-    order: 'http://localhost:3000',
-    inventory: 'http://localhost:3001',
-    notification: 'http://localhost:3002',
-  },
-  staging: {
-    frontend: 'https://frontend-svc.test-suites-poc.work.gd',
-    order: 'https://order-svc.test-suites-poc.work.gd',
-    inventory: 'https://inventory-svc.test-suites-poc.work.gd',
-    notification: 'https://notification-svc.test-suites-poc.work.gd',
-  },
-};
-
-export function resolveEnv(): AppEnvironment {
-  const raw = (process.env.TEST_ENV || 'local').toLowerCase();
-  return raw === 'staging' ? 'staging' : 'local';
+function requireEnv(name: string): string {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(
+      `Missing required env: ${name}. Set it in test-suites/.env or CI (see .env.sample).`,
+    );
+  }
+  return value;
 }
 
 export function getUrls(): EnvironmentUrls {
-  const env = resolveEnv();
-  const base = defaults[env];
   return {
-    frontend: process.env.FRONTEND_URL || base.frontend,
-    order: process.env.ORDER_URL || base.order,
-    inventory: process.env.INVENTORY_URL || base.inventory,
-    notification: process.env.NOTIFICATION_URL || base.notification,
+    frontend: requireEnv('FRONTEND_URL'),
+    order: requireEnv('ORDER_URL'),
+    inventory: requireEnv('INVENTORY_URL'),
+    notification: requireEnv('NOTIFICATION_URL'),
   };
+}
+
+/** Optional label for reports/metadata (not used for URL resolution). */
+export function getTestEnvLabel(): string | undefined {
+  const raw = process.env.TEST_ENV?.trim();
+  return raw || undefined;
 }

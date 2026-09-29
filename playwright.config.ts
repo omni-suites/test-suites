@@ -1,5 +1,10 @@
+import path from 'path';
+import dotenv from 'dotenv';
 import { defineConfig, devices } from '@playwright/test';
 import { getUrls } from './config/environments';
+
+// Load test-suites/.env into process.env (gitignored)
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * Central E2E config — tests live under services/ (domain folders + tags).

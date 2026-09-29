@@ -26,6 +26,8 @@ npx playwright install
 cp .env.sample .env
 ```
 
+`.env` is loaded automatically by `playwright.config.ts` (dotenv).
+
 ## Run
 
 ```bash
@@ -34,9 +36,6 @@ npm run test:smoke
 npm run test:api
 npm run test:ui
 npm run test:regression
-
-# Against Traefik staging hosts
-TEST_ENV=staging npm run test:smoke
 ```
 
-URLs come from `config/environments.ts` (override via `.env`: `FRONTEND_URL`, `ORDER_URL`, …).
+Set required URLs in `.env` (`FRONTEND_URL`, `ORDER_URL`, `INVENTORY_URL`, `NOTIFICATION_URL`). See `.env.sample`. Missing vars fail fast at startup.
