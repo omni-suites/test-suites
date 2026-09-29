@@ -59,6 +59,8 @@ Reporting is on when `RP_API_KEY` is set (`RP_ENABLED=false` to skip).
 
 After a run: ReportPortal → **omni-suites** → Launches. Local HTML report stays separate (`npm run report`).
 
+Each test calls `attachRpMeta()` (`src/shared/helpers/rp.ts`) so Item Details get **Test case id**, **Description**, and attributes (`suite` / `layer` / `service` / `squash`). API helpers use `test.step` + `rpInfo` for richer ALL LOGS.
+
 ## CI
 
 | Workflow | Trigger | Suite |

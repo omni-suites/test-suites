@@ -1,22 +1,45 @@
 import { test, expect } from '../../shared/fixtures';
 import { createOrder, listOrders } from '../../shared/api/orders';
+import { attachRpMeta } from '../../shared/helpers/rp';
 
 test.describe('order-service API', () => {
   test('Create order via Order API @smoke @regression @api [TC-103]', async ({
     request,
   }) => {
+    attachRpMeta({
+      testCaseId: 'TC-103',
+      description: 'Create an order via POST /orders (SKU-001, qty 1)',
+      suites: ['smoke', 'regression'],
+      layer: 'api',
+      service: 'order',
+    });
+
     const res = await createOrder(request, {
       itemId: 'SKU-001',
       quantity: 1,
     });
-    expect(res.ok(), `POST /orders → ${res.status()} ${await res.text()}`).toBeTruthy();
-    const body = await res.json();
-    expect(body).toHaveProperty('id');
-    expect(body.itemId).toBe('SKU-001');
+    await test.step('Assert order created', async () => {
+      const status = res.status();
+      const text = await res.text();
+      expect(res.ok(), `POST /orders → ${status} ${text}`).toBeTruthy();
+      const body = JSON.parse(text);
+      expect(body).toHaveProperty('id');
+      expect(body.itemId).toBe('SKU-001');
+    });
   });
 
   test('List orders @sanity @api [TC-103b]', async ({ request }) => {
+    attachRpMeta({
+      testCaseId: 'TC-103b',
+      description: 'List orders via GET /orders',
+      suites: ['sanity'],
+      layer: 'api',
+      service: 'order',
+    });
+
     const orders = await listOrders(request);
-    expect(Array.isArray(orders)).toBeTruthy();
+    await test.step('Assert orders is an array', async () => {
+      expect(Array.isArray(orders)).toBeTruthy();
+    });
   });
 });
