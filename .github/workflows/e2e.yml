@@ -24,7 +24,7 @@ on:
           - all
           - custom
       grep:
-        description: 'Custom tag or filter regex (e.g. @ABC, @auth, TC-103) - used when suite is "custom"'
+        description: 'Custom tag, regex, or comma-separated list (e.g. TC-106, TC-105 or @auth) - used when suite is "custom"'
         required: false
         default: ''
         type: string
@@ -73,11 +73,13 @@ jobs:
         run: |
           if [ "${{ inputs.suite }}" = "custom" ]; then
             if [ -z "${{ inputs.grep }}" ]; then
-              echo "::error::suite is set to 'custom' but the grep input is empty! Please provide a tag like @ABC or a regex."
+              echo "::error::suite is set to 'custom' but the grep input is empty! Please provide tags (e.g. TC-106, TC-105 or @ABC)."
               exit 1
             fi
-            echo "Running custom grep: ${{ inputs.grep }}"
-            npx playwright test --grep "${{ inputs.grep }}"
+            # Convert comma-separated list (e.g. "TC-106, TC-105") into regex ("TC-106|TC-105")
+            GREP_PATTERN=$(echo "${{ inputs.grep }}" | sed -E 's/[[:space:]]*,[[:space:]]*/|/g')
+            echo "Running custom grep pattern: ${GREP_PATTERN}"
+            npx playwright test --grep "${GREP_PATTERN}"
           elif [ "${{ inputs.suite }}" = "all" ]; then
             npx playwright test
           else
