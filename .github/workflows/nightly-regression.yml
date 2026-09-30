@@ -1,7 +1,6 @@
-# INACTIVE until renamed to nightly-regression.yml (review before push)
 # Nightly @regression against staging + ReportPortal
 #
-# Requires same staging vars/secrets as e2e.yml.bk
+# Requires same staging vars/secrets as e2e.yml
 
 name: Nightly Regression
 

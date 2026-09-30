@@ -1,7 +1,6 @@
-# INACTIVE until renamed to e2e.yml (review before push)
 # On-demand E2E — suite via tags; reports to ReportPortal when RP_API_KEY is set
 #
-# GitHub → Settings → Environments → staging (or repo vars/secrets):
+# GitHub → Settings → Secrets and variables → Actions (or Environments → staging):
 #   vars:   FRONTEND_URL, ORDER_URL, INVENTORY_URL, NOTIFICATION_URL
 #   vars:   RP_ENDPOINT, RP_PROJECT
 #   secret: RP_API_KEY

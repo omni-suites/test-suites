@@ -1,9 +1,4 @@
-# INACTIVE until renamed to post-deploy-smoke.yml (review before push)
-# Callable after app deploy (workflow_call) or manual — runs @smoke + ReportPortal
-#
-# Requires same staging vars/secrets as e2e.yml.bk
-
-name: Post-deploy smoke (stub)
+name: Post-deploy smoke
 
 on:
   workflow_call:
@@ -26,6 +21,11 @@ on:
         options:
           - staging
           - local
+      trigger_service:
+        description: Which app service triggered this
+        type: string
+        required: false
+        default: ''
 
 jobs:
   smoke:
@@ -37,7 +37,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
