@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       suite:
-        description: 'Tag filter (smoke | sanity | regression | ui | api | all)'
+        description: 'Tag filter (smoke | sanity | regression | ui | api | all | custom)'
         required: true
         default: 'smoke'
         type: choice
@@ -22,6 +22,12 @@ on:
           - ui
           - api
           - all
+          - custom
+      grep:
+        description: 'Custom tag or filter regex (e.g. @ABC, @auth, TC-103) - used when suite is "custom"'
+        required: false
+        default: ''
+        type: string
       test_env:
         description: 'Label for TEST_ENV / RP attributes (URLs still from vars)'
         required: true
@@ -63,9 +69,16 @@ jobs:
           RP_PROJECT: ${{ vars.RP_PROJECT }}
           RP_API_KEY: ${{ secrets.RP_API_KEY }}
           RP_LAUNCH: e2e-${{ inputs.suite }}-${{ github.run_id }}
-          RP_DESCRIPTION: '${{ github.workflow }} · ${{ inputs.suite }} · ${{ github.ref_name }} · ${{ github.sha }}'
+          RP_DESCRIPTION: '${{ github.workflow }} · ${{ inputs.suite }} ${{ inputs.grep }} · ${{ github.ref_name }} · ${{ github.sha }}'
         run: |
-          if [ "${{ inputs.suite }}" = "all" ]; then
+          if [ "${{ inputs.suite }}" = "custom" ]; then
+            if [ -z "${{ inputs.grep }}" ]; then
+              echo "::error::suite is set to 'custom' but the grep input is empty! Please provide a tag like @ABC or a regex."
+              exit 1
+            fi
+            echo "Running custom grep: ${{ inputs.grep }}"
+            npx playwright test --grep "${{ inputs.grep }}"
+          elif [ "${{ inputs.suite }}" = "all" ]; then
             npx playwright test
           else
             npx playwright test --grep "@${{ inputs.suite }}"
