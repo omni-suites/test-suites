@@ -108,7 +108,9 @@ jobs:
                 "run_id": "${{ github.run_id }}",
                 "run_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
                 "ref": "${{ github.ref_name }}",
-                "sha": "${{ github.sha }}"
+                "sha": "${{ github.sha }}",
+                "rp_launch": "e2e-${{ inputs.suite }}-${{ github.run_id }}",
+                "rp_project": "omni-suites"
               }'
           else
             echo "::warning::TEST_RESULT_HOOK_URL secret is not set, skipping notification."
