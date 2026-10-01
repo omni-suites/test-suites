@@ -50,3 +50,26 @@ jobs:
           name: playwright-report-nightly
           path: playwright-report/
           retention-days: 14
+
+      - name: Report Results to Omni-Integration
+        if: always()
+        env:
+          TEST_RESULT_HOOK_URL: ${{ secrets.TEST_RESULT_HOOK_URL }}
+        run: |
+          if [ -n "$TEST_RESULT_HOOK_URL" ]; then
+            curl -s -X POST "$TEST_RESULT_HOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "suite": "regression",
+                "status": "${{ job.status }}",
+                "test_env": "staging",
+                "run_id": "${{ github.run_id }}",
+                "run_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "ref": "${{ github.ref_name }}",
+                "sha": "${{ github.sha }}",
+                "rp_launch": "nightly-regression-${{ github.run_id }}",
+                "rp_project": "omni-suites"
+              }'
+          else
+            echo "::warning::TEST_RESULT_HOOK_URL secret is not set, skipping notification."
+          fi
